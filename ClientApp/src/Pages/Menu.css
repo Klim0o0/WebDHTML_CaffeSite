@@ -1,0 +1,45 @@
+.Menu {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    text-align: left;
+    margin: 10px;
+}
+
+.mob {
+    display: none;
+}
+
+.FoodName {
+    font-size: 25px;
+    font-weight: bold
+}
+
+
+.Price {
+    font-size: 24px;
+}
+
+
+.Description {
+    color: #252525;
+    font-size: 20px;
+    line-height: 1.375em;
+    margin: 4px 0 4px;
+}
+
+@media screen and (max-width: 720px) {
+    .mob {
+        display: block;
+    }
+
+    .Menu {
+        display: block;
+    }
+
+    .desk {
+        display: none;
+    }
+}
+
+

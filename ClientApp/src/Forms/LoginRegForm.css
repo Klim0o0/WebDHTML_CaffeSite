@@ -1,0 +1,11 @@
+.regLog {
+    position: relative;
+    display: inline-block;
+}
+
+.regLog label {
+    margin-left: auto;
+    margin-right: 0;
+    padding: 0;
+    text-align:left;
+}
