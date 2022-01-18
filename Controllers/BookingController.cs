@@ -14,12 +14,12 @@ namespace Caffe.Controllers
     public class BookingController : Controller
     {
         private readonly MongoClient _mongoClient;
-        private readonly IMongoCollection<Table> _mongoCollection;
+        private readonly IMongoCollection<MongoTable> _mongoCollection;
 
         public BookingController(MongoClient mongoClient)
         {
             _mongoClient = mongoClient;
-            _mongoCollection = _mongoClient.GetDatabase("booking").GetCollection<Table>("tables");
+            _mongoCollection = _mongoClient.GetDatabase("booking").GetCollection<MongoTable>("tables");
         }
 
         [HttpGet]
@@ -94,7 +94,7 @@ namespace Caffe.Controllers
                 return BadRequest("Нет свободных столов");
             }
 
-            var b = new Booking()
+            var b = new Models.MongoModels.MongoBooking()
             {
                 User = User.Identity.Name,
                 From = from,
@@ -103,7 +103,7 @@ namespace Caffe.Controllers
 
 
             await _mongoCollection.UpdateOneAsync(x => x.Id == tables.Id,
-                Builders<Table>.Update.Set(u => u.Bookings, tables.Bookings.Append(b).ToArray()));
+                Builders<MongoTable>.Update.Set(u => u.Bookings, tables.Bookings.Append(b).ToArray()));
 
             return Ok("Заброниррованно");
         }

@@ -2,7 +2,7 @@
 using Caffe.Models.ApiModels;
 using Caffe.Models.MongoModels;
 
-namespace Caffe.Models.Mapers
+namespace Caffe.Models.Mappers
 {
     public class MenuMappingProfile : Profile
     {

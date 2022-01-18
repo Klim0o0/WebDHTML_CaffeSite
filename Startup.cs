@@ -1,12 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Caffe.Models;
 using Caffe.Models.ApiModels;
-using Caffe.Models.Mapers;
+using Caffe.Models.Mappers;
 using Caffe.Models.MongoModels;
+using Caffe.Models.PasswordValidators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,9 +35,27 @@ namespace Caffe
                 MongoClientSettings.FromConnectionString(Configuration.GetConnectionString("DefaultConnection"));
             var client = new MongoClient(settings);
             services.AddSingleton(client);
-            services.AddIdentity<MongoUser, MongoRole>()
-                .AddMongoDbStores<MongoUser, MongoRole, Guid>(new MongoDbContext(client.GetDatabase("users")));
-            services.AddAuthentication().AddCookie();
+
+            services.AddSingleton(new Mail(Configuration.GetConnectionString("Email"),
+                Configuration.GetConnectionString("EmailPass"), "smtp.gmail.com", 587));
+            services.AddSingleton(new Dictionary<string, UserDto>());
+            services.AddIdentity<MongoUser, MongoRole>(options =>
+                {
+                    options.Password.RequiredLength = 0;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredUniqueChars = 0;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                })
+                .AddMongoDbStores<MongoUser, MongoRole, Guid>(new MongoDbContext(client.GetDatabase("users")))
+                .AddPasswordValidator<PasswordLengthValidator>();
+            services.AddAuthentication().AddCookie().AddGoogle(options =>
+            {
+                options.ClientId = Configuration.GetConnectionString("ClientId");
+                options.ClientSecret = Configuration.GetConnectionString("ClientSecret");
+            });
+
             services.ConfigureApplicationCookie(ops =>
             {
                 ops.Cookie.Name = "Caffe_cookie";
@@ -49,7 +70,6 @@ namespace Caffe
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

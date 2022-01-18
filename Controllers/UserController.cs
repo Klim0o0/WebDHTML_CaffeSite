@@ -9,11 +9,11 @@ using MongoDB.Bson;
 namespace Caffe.Controllers
 {
     [Authorize]
-    public class UserConrtoller : Controller
+    public class UserController : Controller
     {
         private readonly UserManager<MongoUser> _userManager;
 
-        public UserConrtoller(UserManager<MongoUser> userManager)
+        public UserController(UserManager<MongoUser> userManager)
         {
             _userManager = userManager;
         }
@@ -31,7 +31,7 @@ namespace Caffe.Controllers
         public async Task<IActionResult> GetInfo()
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            return Ok(new UserInfoDto { Login = user.Email, PhoneNumber = user.PhoneNumber ?? "" }.ToJson());
+            return Ok(new UserInfoDto { Login = user.Email }.ToJson());
         }
     }
 }

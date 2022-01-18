@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {EmptyFunction, Post} from "../Utils/Utils";
 import Loading from "./Loading";
+import googleLogo from "../Images/btn_google_signin_light_normal_web.png"
+import "./LoginForm.css"
 
 export default function LoginForm(props) {
     const [email, setEmail] = useState("");
@@ -42,6 +44,14 @@ export default function LoginForm(props) {
                     placeholder="Пароль"
                     onChange={event => setPass(event.target.value)}/></div>
         <button>Войти</button>
+
+        <form className="google"
+              method='POST'
+              action={`account/external-login?provider=Google&returnUrl=/user`}>
+            <button
+                type="submit"><img src={googleLogo}/>
+            </button>
+        </form>
         {started ? <Loading/> : <p1>{loaded ? item[1] : ""}</p1>}
     </form>)
 

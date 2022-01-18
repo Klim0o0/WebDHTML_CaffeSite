@@ -43,6 +43,19 @@ export function Post(url, setItems, setIsLoaded, setError, body) {
         })
 }
 
+export function PostJsonResponse(url, setItems, setIsLoaded, setError, body) {
+    fetch(url, {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: body
+    }).then(r => Promise.all([r.ok, r.json()]))
+        .then((result) => {
+            setItems(result);
+            setIsLoaded(true);
+        }, (error) => {
+            setError(error);
+            setIsLoaded(true);
+        })
+}
+
 
 function TryGetJson(r) {
     let x = null

@@ -14,15 +14,13 @@ namespace Caffe.Controllers
     public class AdminController : Controller
     {
         private readonly RoleManager<MongoRole> _roleManager;
-        private readonly MongoClient _mongoClient;
-        private readonly IMongoCollection<Table> _mongoTableCollection;
+        private readonly IMongoCollection<MongoTable> _mongoTableCollection;
         private readonly IMongoCollection<MenuItemMongoDto> _mongoMenuCollection;
 
         public AdminController(RoleManager<MongoRole> roleManager, MongoClient mongoClient)
         {
             _roleManager = roleManager;
-            _mongoClient = mongoClient;
-            _mongoTableCollection = mongoClient.GetDatabase("booking").GetCollection<Table>("tables");
+            _mongoTableCollection = mongoClient.GetDatabase("booking").GetCollection<MongoTable>("tables");
             _mongoMenuCollection = mongoClient.GetDatabase("menu").GetCollection<MenuItemMongoDto>("menu");
         }
 
@@ -38,7 +36,7 @@ namespace Caffe.Controllers
         [Route("/api/tables")]
         public async Task<IActionResult> AddTable([FromBody] TableDto table)
         {
-            await _mongoTableCollection.InsertOneAsync(new Table()
+            await _mongoTableCollection.InsertOneAsync(new MongoTable()
             {
                 SeatsCount = table.SeatsCount,
                 TableNumber = table.TableNumber,

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {EmptyFunction, Post} from "../Utils/Utils";
+import {EmptyFunction, Post, PostJsonResponse} from "../Utils/Utils";
 import {Redirect} from "react-router-dom";
 import Loading from "./Loading";
 import "./LoginRegForm.css";
@@ -11,12 +11,6 @@ export default function RegistrationForm(props) {
     const [item, setItem] = useState(null);
     const [loaded, setLoaded] = useState(false)
     const [started, setStarted] = useState(false)
-
-    useEffect(x => {
-        if (item) {
-            props.setIsA(item[0])
-        }
-    }, [item])
 
     useEffect(x => {
         if (loaded) {
@@ -31,27 +25,26 @@ export default function RegistrationForm(props) {
 
     const reg = event => {
         event.preventDefault();
-        Post('/api/Account/Register', setItem, setLoaded, EmptyFunction, JSON.stringify({
+        PostJsonResponse('/api/Account/Register', setItem, setLoaded, EmptyFunction, JSON.stringify({
             Email: email,
-            PhoneNumber: phone,
             Password: password
         }))
         setStarted(true)
     }
-
+    if (loaded && item[0]) {
+        return (<div>{item[1].map(x => <p>{x}</p>)}</div>)
+    }
     return (<form onSubmit={reg}>
         <div className="regLog">
             <div><input type="text" name="email" placeholder="Email" value={email}
                         onChange={event => setEmail(event.target.value)}/></div>
-            <div><input type="text" name="phone" placeholder="Номер телефона" value={phone}
-                        onChange={event => setPhone(event.target.value)}/></div>
             <div><input type="password" name="password" placeholder="Пароль" value={password}
                         onChange={event => setPass(event.target.value)}/></div>
             <div>
                 <button>Зарегистрироваться</button>
             </div>
         </div>
-        {started ? <Loading/> : loaded ? <p>{item[1]}</p> : ""}
+        {started ? <Loading/> : loaded ? <p>{item[1].map(x => <p>{x}</p>)}</p> : ""}
     </form>)
 
 }
